@@ -28,7 +28,8 @@ Installing the plugin is straight forward:
 0. Click on 'Boost', the now-hyperlinked name for the plugin to get to Boost's settings.
 0. Fill out the settings. For the last setting, I'm using "craft/plugins craft/templates public/css public/fonts public/img public/js" as the directories to copy from SVN.
 
-==== Usage ====
+Usage
+-----
 
 To call this command, we use Craft's default CLI:
 
