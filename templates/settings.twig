@@ -1,0 +1,67 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+	first:        true,
+	label:        "Environment Root"|t,
+	id:           'envRoot',
+	name:         'envRoot',
+	instructions: "Root path for all environments. (/var/www/domain.tld)"|t,
+	value:        settings.envRoot,
+	autofocus:    true,
+	errors:       settings.getErrors('envRoot')
+}) }}
+
+{{ forms.textField({
+	first:        true,
+	label:        "Canonical Environment"|t,
+	id:           'canonicalEnv',
+	name:         'canonicalEnv',
+	instructions: "Which environment to use as canonical for content. (Default is prod)"|t,
+	value:        settings.canonicalEnv,
+	autofocus:    true,
+	errors:       settings.getErrors('canonicalEnv')
+}) }}
+
+{{ forms.textField({
+	first:        true,
+	label:        "Base Database Name"|t,
+	id:           'dbName',
+	name:         'dbName',
+	instructions: "This will be used for the <strong>production</strong> environment. For Dev and Stage, this will be prefixed with 'dev_' and 'stage_' respectively."|t,
+	value:        settings.dbName,
+	autofocus:    true,
+	errors:       settings.getErrors('dbName')
+}) }}
+
+{{ forms.textField({
+	first:        true,
+	label:        "VCS URL"|t,
+	id:           'vcsUrl',
+	name:         'vcsUrl',
+	instructions: "URL to checkout the source from the Version Control System."|t,
+	value:        settings.vcsUrl,
+	autofocus:    true,
+	errors:       settings.getErrors('vcsUrl')
+}) }}
+
+{{ forms.textField({
+	first:        true,
+	label:        "VCS Cache Directory"|t,
+	id:           'vcsCache',
+	name:         'vcsCache',
+	instructions: "Absolute path for the VCS Cache directory."|t,
+	value:        settings.vcsCache,
+	autofocus:    true,
+	errors:       settings.getErrors('vcsCache')
+}) }}
+
+{{ forms.textField({
+	first:        true,
+	label:        "VCS Directories"|t,
+	id:           'vcsDirs',
+	name:         'vcsDirs',
+	instructions: "Relative paths to directories to copy from VCS."|t,
+	value:        settings.vcsDirs,
+	autofocus:    true,
+	errors:       settings.getErrors('vcsDirs')
+}) }}
