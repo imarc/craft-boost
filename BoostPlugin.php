@@ -10,7 +10,7 @@ class BoostPlugin extends BasePlugin
 
 	function getVersion()
 	{
-		return '0.1';
+		return '0.2';
 	}
 
 	function getDeveloper()
@@ -20,7 +20,7 @@ class BoostPlugin extends BasePlugin
 
 	function getDeveloperUrl()
 	{
-		return 'http://www.imarc.net';
+		return 'http://gitlab.imarc.net/imarc/craft-boost-plugin';
 	}
 
 	function defineSettings()

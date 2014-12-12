@@ -7,6 +7,7 @@ Boost is loosely inspired by Patton but worse. It supports
 
 * Copying files from one environment to another,
 * Copying the database from one environment to another, and
+* Pulling new files from Git.
 * Pulling new files for Subversion.
 
 **It does not support**
@@ -38,3 +39,15 @@ To call this command, we use Craft's default CLI:
 To deploy to a specific environment, use
 
 	dev/craft/app/etc/console/yiic deploy --env=stage
+
+
+Changelog
+---------
+
+### 0.2
+
+* Dropping support for subversion, adding support for Git
+
+### 0.1
+
+* Support for subversion only initial implementation

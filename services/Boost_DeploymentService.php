@@ -22,7 +22,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
 		$cmd = call_user_func_array('sprintf', func_get_args());
 
 		echo "\n= $cmd =\n";
-		system($cmd);
+		return system($cmd);
 	}
 
 	/**
@@ -45,8 +45,21 @@ class Boost_DeploymentService extends BaseApplicationComponent
 		// Copy from canonical environment to start new environment
 		$this->sh("rsync -a $src_env/ $new_env");
 
-		// pre the VCS directory
-		$this->prepVCSCache('HEAD');
+		if ($env == 'prod') {
+			$target_commit = $this->getCommit('stage');
+		} else {
+			$target_commit = 'master';
+		}
+
+		if (!$target_commit) {
+			throw new Exception("Unable to determine stage environment commit.");
+		}
+
+
+		// prep the VCS directory
+		$this->prepVCSCache($target_commit);
+
+		$commit = $this->getCommit('cache');
 
 		// Copy from the VCS cache to the new environment
 		$vcs_dirs = array_map('trim', explode(' ', $settings->vcsDirs));
@@ -64,6 +77,8 @@ class Boost_DeploymentService extends BaseApplicationComponent
 			$this->sh("chown -R www-data:web \"$new_env/$dir\"");
 			$this->sh("chmod -R g+rw \"$new_env/$dir\"");
 		}
+
+		$this->sh("echo %s > %s", $commit, "$new_env/boost.commit");
 
 
 		// Remove any old old-dir.
@@ -129,49 +144,68 @@ class Boost_DeploymentService extends BaseApplicationComponent
 		return false;
 	}
 
-	/**
-	 * getVCSVersion() looks for a 'boost.rev' file which Boost doesn't even
-	 * create yet.
-	 *
-	 * @param mixed $craft_base_path
-	 * @return void
-	 */
-	public function getVCSVersion($craft_base_path)
+	 /**
+	  * getCommit() returns the currrent commit of a given environment or the VCS cache.
+	  *
+	  * @param  string $env  either an environment name or 'cache' for the cache.
+	  * @return string
+	  */
+	public function getCommit($env)
 	{
-		$filename = "$craft_base_path/boost.rev";
-		if (file_exists($filename)) {
-			return trim(file_get_contents($filename));
+		$settings = craft()->plugins->getPlugin('boost')->getSettings();
+
+
+		if ($env == 'cache') {
+			$original_cwd = getcwd();
+			chdir($settings->vcsCache);
+
+			$commit = $this->sh("git rev-parse HEAD");
+
+			chdir($original_cwd);
+
+			return $commit;
+
+		} else {
+
+			if (strpos($env, '/') !== FALSE) {
+				$file = "$env/boost.commit";
+			} else {
+				$file = $settings->envRoot . "/$env/boost.commit";
+			}
+
+			return file_exists($file) ? trim(file_get_contents($file)) : false;
 		}
 
-		return false;
 	}
 
 	/**
-	 * prepVCSCache() makes sure the VCS cache is at the specified revision.
+	 * prepVCSCache() makes sure the VCS cache is at the specified commit.
 	 * Currently only supports Subversion, but ideally I'd like to extend this
 	 * to support git later.
 	 *
-	 * @param mixed $rev
+	 * @param mixed $commit
 	 * @return void
 	 */
-	public function prepVCSCache($rev)
+	public function prepVCSCache($commit)
 	{
 		$settings = craft()->plugins->getPlugin('boost')->getSettings();
 
 		if (!file_exists($settings->vcsCache)) {
-			$this->sh(sprintf(
-				"svn checkout -r %s %s %s",
-				$rev,
-				$settings->vcsUrl,
-				$settings->vcsCache
-			));
-		} else {
-			$this->sh(sprintf(
-				"svn up -r %s %s",
-				$rev,
-				$settings->vcsCache
-			));
+			$this->sh("mkdir %s", $settings->vcsCache);
 		}
+
+		$original_cwd = getcwd();
+		chdir($settings->vcsCache);
+
+		if (!file_exists($settings->vcsCache . "/.git")) {
+			$this->sh("git clone %s .", $settings->vcsUrl);
+		}
+
+		$this->sh('git pull -q origin master');
+
+		$this->sh("git checkout %s", $commit);
+
+		chdir($original_cwd);
 	}
 
 	/**
@@ -185,13 +219,18 @@ class Boost_DeploymentService extends BaseApplicationComponent
 
 		foreach (glob($settings->envRoot . "/*", GLOB_ONLYDIR) as $env) {
 			$craft_ver = $this->getCraftVersion($env);
-			$vcs_ver   = $this->getVCSVersion($env);
+			$commit   = $this->getCommit($env);
 
-			if ($vcs_ver) {
-				echo "$env\t$craft_ver\tr$vcs_ver\n";
+			printf("%s: %s\n",
+				preg_replace('#^' . preg_quote($settings->envRoot) . '/?#', '', $env),
+				$commit
+			);
+
+			/*if ($commit) {
+				echo "$env\t$craft_ver\tr$commit\n";
 			} else {
 				echo "$env\t$craft_ver\n";
-			}
+			}*/
 		}
 	}
 }
