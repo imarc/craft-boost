@@ -3,6 +3,14 @@ README
 
 Boost is a Craft plugin that enables a very simplified deployment system based on our [typical process](http://handbook.imarc.net/deployment). While this software is functional, it should be treated as beta at best. It has strict requirements on how Craft is configured as well as the server environment.
 
+Boost is designed to work with three environments – dev, stage, and prod. It automates copying assets and databases between evironments as well as pulling fresh code from a git repository.
+
+* The database and assets are always copied from the current canonical environment (either dev or prod.)
+* When deploying to dev or stage, the most recent commit from Git is used for VCS files.
+* When deploying to prod, the current commit on stage is used for VCS files.
+
+For more information, see the [iMarc Handbook](http://handbook.imarc.net/deployment).
+
 Boost can
 
 * Copy files from one Craft environment to another Craft environment on the same server,
