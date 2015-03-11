@@ -1,12 +1,15 @@
 <?php
+/**
+ * @copyright 2015 iMarc LLC
+ * @author Kevin Hamer [kh] <kevin@imarc.net>
+ * @license Apache (see LICENSE file)
+ */
+
 namespace Craft;
 
 /**
  * Boost_DeploymentService is a Craft plugin service that provides the ability
  * to handle deployments (although not migrations) with Craft.
- *
- * @copyright 2014 iMarc LLC
- * @author Kevin Hamer [kh] <kevin@imarc.net>
  */
 class Boost_DeploymentService extends BaseApplicationComponent
 {
@@ -29,7 +32,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
 	 * deploy() to an environment. Should be the short name (dev/stage/prod)
 	 * and not the full path.
 	 *
-	 * @param mixed $env
+	 * @param string $env  Environment to deploy to.
 	 * @return void
 	 */
 	public function deploy($env)
@@ -124,8 +127,8 @@ class Boost_DeploymentService extends BaseApplicationComponent
 	 * getCraftVersion() determines the current version of Craft in a directory
 	 * by looking for the craft/app/Info.php file.
 	 *
-	 * @param mixed $craft_base_path
-	 * @return void
+     * @param string $craft_base_path  Directory to search.
+     * @return string                  Version number.
 	 */
 	public function getCraftVersion($craft_base_path)
 	{
@@ -225,12 +228,6 @@ class Boost_DeploymentService extends BaseApplicationComponent
 				preg_replace('#^' . preg_quote($settings->envRoot) . '/?#', '', $env),
 				$commit
 			);
-
-			/*if ($commit) {
-				echo "$env\t$craft_ver\tr$commit\n";
-			} else {
-				echo "$env\t$craft_ver\n";
-			}*/
 		}
 	}
 }
