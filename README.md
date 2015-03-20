@@ -100,8 +100,8 @@ Usage
 
 To call this command, we use Craft's default CLI:
 
-    dev/craft/app/etc/console/yiic deploy
+    /var/www/<sitename>/dev/craft/app/etc/console/yiic deploy
 
 To deploy to a specific environment, use
 
-    dev/craft/app/etc/console/yiic deploy --env=stage
+    /var/www/<sitename>/dev/craft/app/etc/console/yiic deploy --env=stage
