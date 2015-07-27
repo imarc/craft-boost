@@ -39,7 +39,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
     {
         $cmd = call_user_func_array('sprintf', func_get_args());
 
-        return system($cmd);
+        system($cmd);
     }
 
 
@@ -241,8 +241,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
         chdir($settings->vcsCache);
 
         $this->quietSh('git fetch -q origin master:refs/remotes/origin/master');
-
-        echo $this->quietSh('git log %s...origin/master', $current_commit);
+        $this->quietSh('git log %s...origin/master', $current_commit);
         echo "\n";
 
         chdir($original_cwd);
