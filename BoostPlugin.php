@@ -2,6 +2,7 @@
 /**
  * @copyright 2015 iMarc LLC
  * @author Kevin Hamer [kh] <kevin@imarc.net>
+ * @author Jeff Turcotte [jt] <jeff@imarc.net>
  * @license Apache (see LICENSE file)
  */
 
@@ -24,7 +25,7 @@ class BoostPlugin extends BasePlugin
 
     function getVersion()
     {
-        return '0.2.1';
+        return '0.3.0';
     }
 
     function getDeveloper()

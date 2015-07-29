@@ -100,8 +100,12 @@ Usage
 
 To call this command, we use Craft's default CLI:
 
-    /var/www/<sitename>/dev/craft/app/etc/console/yiic deploy
+    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost
 
 To deploy to a specific environment, use
 
-    /var/www/<sitename>/dev/craft/app/etc/console/yiic deploy --env=stage
+    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost deploy --env=stage
+
+To show the log of commits that will be deployed to an env
+
+    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost log --env=stage
