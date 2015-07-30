@@ -218,6 +218,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
             $this->sh("git clone %s .", $settings->vcsUrl);
         }
 
+        $this->sh('git checkout master');
         $this->sh('git pull -q origin master');
         $this->sh("git checkout %s", $commit);
 

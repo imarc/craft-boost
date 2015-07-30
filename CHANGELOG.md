@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### 0.3.1
+
+* Fixed issue with detached HEAD where pull would not be properly merged
+
 ### 0.3.0
 
 * Altered 'deploy' command to 'boost' command with a deploy action
