@@ -20,6 +20,19 @@ namespace Craft;
 class BoostCommand extends BaseCommand
 {
     /**
+     * Prints the boost version
+     *
+     * @return void
+     */
+    public function actionIndex()
+    {
+        $version = craft()->plugins->getPlugin('boost')->getVersion();
+
+        echo "Boost Version: $version\n";
+    }
+
+
+    /**
      * Deploys the specified environment
      *
      * @param string $env The environment
