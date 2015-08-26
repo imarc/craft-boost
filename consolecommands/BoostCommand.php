@@ -19,12 +19,57 @@ namespace Craft;
  */
 class BoostCommand extends BaseCommand
 {
+
+    /**
+     * By default, show the help.
+     *
+     * @return void
+     */
+    public function actionIndex()
+    {
+        $this->actionHelp();
+    }
+
+    /**
+     * Prints some help text.
+     *
+     * @return void
+     */
+    public function actionHelp()
+    {
+        $b = "\033[1m";
+        $d = "\033[0m";
+        $version = craft()->plugins->getPlugin('boost')->getVersion();
+        echo "Boost - Deployment Management - $version\n\n";
+        echo "Usage: ${b}yiic boost${d} [command] [arguments]\n\n";
+
+        echo "Deploying:\n";
+        echo "    ${b}yiic boost deploy${d} --env=dev\n";
+        echo "        Deploys ${b}master${d} to the DEV environment.\n\n";
+        echo "    ${b}yiic boost deploy${d} --env=stage\n";
+        echo "        Deploys ${b}master${d} to the STAGE environment.\n\n";
+        echo "    ${b}yiic boost deploy${d} --env=prod\n";
+        echo "        Deploys the version running on the STAGE environment to the PROD environment.\n\n";
+
+        echo "Log:\n";
+        echo "    ${b}yiic boost log${d} --env=[ENVIRONMENT]\n";
+        echo "        Shows the git log of what commits will be deployed to the environment.\n\n";
+
+        echo "Versions:\n";
+        echo "    ${b}yiic boost versions${d}\n";
+        echo "        Shows the current versions of each of the environments.\n\n";
+
+        echo "Version:\n";
+        echo "    ${b}yiic boost version${d}\n";
+        echo "        Shows the current version of Boost.\n\n";
+    }
+
     /**
      * Prints the boost version
      *
      * @return void
      */
-    public function actionIndex()
+    public function actionVersion()
     {
         $version = craft()->plugins->getPlugin('boost')->getVersion();
 
@@ -70,6 +115,6 @@ class BoostCommand extends BaseCommand
     {
         $deployment = craft()->boost_deployment;
 
-        $deployment->showVersions($env);
+        $deployment->showVersions();
     }
 }
