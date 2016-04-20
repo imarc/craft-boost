@@ -1,0 +1,13 @@
+{
+    "name": "imarc/craft-boost",
+    "description": "A Craft plugin that provides basic deployment.",
+    "type": "library",
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "Kevin Hamer",
+            "email": "kevin@imarc.com"
+        }
+    ],
+    "require": {}
+}
