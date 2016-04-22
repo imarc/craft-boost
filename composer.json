@@ -2,8 +2,8 @@
     "name": "imarc/craft-boost",
     "description": "A Craft plugin that provides basic deployment.",
     "homepage": "https://github.com/imarc/craft-boost",
-    "version": "0.3.2",
-    "type": "library",
+    "version": "0.3.3",
+    "type": "craft-plugin",
     "license": "Apache",
     "authors": [
         {
@@ -11,5 +11,7 @@
             "email": "kevin@imarc.com"
         }
     ],
-    "require": {}
+    "require": {
+        "composer/installers": "~1.0"
+    }
 }
