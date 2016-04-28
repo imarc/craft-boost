@@ -2,7 +2,6 @@
     "name": "imarc/craft-boost",
     "description": "A Craft plugin that provides basic deployment.",
     "homepage": "https://github.com/imarc/craft-boost",
-    "version": "1.0.0",
     "type": "craft-plugin",
     "license": "Apache",
     "authors": [
