@@ -1,8 +1,8 @@
 <?php
 /**
- * @copyright 2015 iMarc LLC
- * @author Kevin Hamer [kh] <kevin@imarc.net>
- * @author Jeff Turcotte [jt] <jeff@imarc.net>
+ * @copyright 2016 Imarc LLC
+ * @author Kevin Hamer [kh] <kevin@imarc.com>
+ * @author Jeff Turcotte [jt] <jeff@imarc.com>
  * @license Apache (see LICENSE file)
  */
 
@@ -18,39 +18,39 @@ namespace Craft;
  */
 class BoostPlugin extends BasePlugin
 {
-    function getName()
+    public function getName()
     {
         return 'Boost';
     }
 
-    function getVersion()
+    public function getVersion()
     {
         return '0.3.x';
     }
 
-    function getDeveloper()
+    public function getDeveloper()
     {
-        return 'iMarc';
+        return 'Imarc';
     }
 
-    function getDeveloperUrl()
+    public function getDeveloperUrl()
     {
-        return 'http://www.imarc.net';
+        return 'https://www.imarc.com';
     }
 
-    function defineSettings()
+    public function defineSettings()
     {
         return [
-            'vcsUrl'       => [AttributeType::String, 'default' => ''],
-            'vcsCache'     => [AttributeType::String, 'default' => ''],
-            'dbName'       => [AttributeType::String, 'default' => ''],
-            'envRoot'      => [AttributeType::String, 'default' => ''],
-            'vcsDirs'      => [AttributeType::String, 'default' => ''],
+            'vcsUrl' => [AttributeType::String, 'default' => ''],
+            'vcsCache' => [AttributeType::String, 'default' => ''],
+            'dbName' => [AttributeType::String, 'default' => ''],
+            'envRoot' => [AttributeType::String, 'default' => ''],
+            'vcsDirs' => [AttributeType::String, 'default' => ''],
             'canonicalEnv' => [AttributeType::String, 'default' => 'prod'],
         ];
     }
 
-    function getSettingsHtml()
+    public function getSettingsHtml()
     {
         return craft()->templates->render('boost/settings', ['settings' => $this->getSettings()]);
     }
