@@ -40,18 +40,18 @@ class BoostPlugin extends BasePlugin
 
     public function defineSettings()
     {
-        return [
-            'vcsUrl' => [AttributeType::String, 'default' => ''],
-            'vcsCache' => [AttributeType::String, 'default' => ''],
-            'dbName' => [AttributeType::String, 'default' => ''],
-            'envRoot' => [AttributeType::String, 'default' => ''],
-            'vcsDirs' => [AttributeType::String, 'default' => ''],
-            'canonicalEnv' => [AttributeType::String, 'default' => 'prod'],
-        ];
+        return array(
+            'vcsUrl' => array(AttributeType::String, 'default' => ''),
+            'vcsCache' => array(AttributeType::String, 'default' => ''),
+            'dbName' => array(AttributeType::String, 'default' => ''),
+            'envRoot' => array(AttributeType::String, 'default' => ''),
+            'vcsDirs' => array(AttributeType::String, 'default' => ''),
+            'canonicalEnv' => array(AttributeType::String, 'default' => 'prod'),
+        );
     }
 
     public function getSettingsHtml()
     {
-        return craft()->templates->render('boost/settings', ['settings' => $this->getSettings()]);
+        return craft()->templates->render('boost/settings', array('settings' => $this->getSettings()));
     }
 }
