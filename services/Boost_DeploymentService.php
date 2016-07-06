@@ -99,7 +99,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
         $this->sh("echo %s > %s", $commit, "$new_env/boost.commit");
 
         if (file_exists("$new_env/composer.json")) {
-            $this->sh("composer install -d %s", $new_env);
+            $this->sh("composer install --ignore-platform-reqs -d %s", $new_env);
         }
 
 
