@@ -102,6 +102,13 @@ class Boost_DeploymentService extends BaseApplicationComponent
             $this->sh("composer install --ignore-platform-reqs -d %s", $new_env);
         }
 
+        // Run Before Deploy Hooks
+        if ($settings->preDeploymentHooks) {
+            $original_cwd = getcwd();
+            chdir($new_env);
+            $this->sh($settings->preDeploymentHooks);
+            chdir($original_cwd);
+        }
 
         // Remove any old old-dir.
         $live_env = $settings->envRoot . "/$env";
@@ -145,6 +152,14 @@ class Boost_DeploymentService extends BaseApplicationComponent
 
         // Move current env to old and new env live.
         $this->sh("mv \"$live_env\" \"$old_env\"; mv \"$new_env\" \"$live_env\"");
+
+        // Run After Deploy Hooks
+        if ($settings->postDeploymentHooks) {
+            $original_cwd = getcwd();
+            chdir($live_env);
+            $this->sh($settings->postDeploymentHooks);
+            chdir($original_cwd);
+        }
 
         echo "\nDeployment Complete.\n";
     }
