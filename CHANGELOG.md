@@ -1,6 +1,32 @@
 Changelog
 =========
 
+### 1.2.0
+
+* No longer leave behind old-* ddirectories
+* Added support for custom dev and stage DB names; still will default to using dev_<PRODDB> and stage_<PRODDB>
+* Added Pre Deployment Hooks and Post Deployment Hooks
+    * These are called directly by `system()` as simple scripts.
+* Added support for `package.json` and gulp
+    * If `package.json` is available (copied into the new environment) then Boost will run `npm install --production`
+    * If `gulpfile.js` is available (copied into the new environment) then Boost will run `gulp`
+
+### 1.1.0
+
+* Added support for composer; Boost will run composer install if a a composer.json is available. That means you likely need to add composer.json to your files to deploy to enable.
+
+### 1.0.2
+
+* Support added for PHP 5.3 (also added in 0.3.4)
+
+### 1.0.0
+
+* Boost is flagged as stable
+
+### 0.3.3
+
+* Boost is a craft-plugin, installable via composer installers
+
 ### 0.3.2
 
 * Added help to console command
