@@ -81,19 +81,29 @@ Installing Boost is straight forward:
    settings.
 0. Fill out the settings.
 
+Composer, NPM, and Gulp
+-----------------------
+
+If a `composer.json`, `package.json`, or `gulpfile.js` are found in the new environment, then `composer install --ignore-platform-reqs`, `npm install --production`, and `gulp` will be called respectively. For these files to exist in the new environment, you will **need to add them to the VCS Direcories setting below.** If you do not add them, then these command won't be automatically called.
+
 Boost Settings
 --------------
 
 * **Environment Root** – a single directory containing all environments. For example, `/var/www/example.com/`.
 * **Canonical Environment** – With environment to use as the canonical source for content. This is typically dev before a site is launched, and prod once the site is launched.
-* **Base Database Name** – This database name is used for the **proudction** environment. For dev and stage, the database name will be prefixed with dev\_ or stage\_ respectively.
+* **Development Database Name** – This database name is used for the **development** environment. If left blank, will use the production database name prefixed with dev\_.
+* **Staging Database Name** – This database name is used for the **staging** environment. If left blank, will use the production database name prefixed with stage\_.
+* **Production Database Name** – This database name is used for the **production** environment.
 * **VCS URL** – This is the URL to checkout from version control. For example, `git@github.com:imarc/example-com.git`.
 * **VCS Cache Directory** – Boost keeps a local clone of the repository in this directory. Typically, something like `/var/www/example.com/cache`.
 * **VCS Directories** – This is a space separated list of relative paths to directories to copy from VCS into the environment as part of deployment. This might be something like
 
 ```
-craft/plugins craft/templates public/css public/fonts public/img public/.htaccess
+craft/plugins craft/templates public/css public/fonts public/img public/.htaccess composer.json
 ```
+
+* **Pre Deployment Hooks** – These are run within the new environment **before** it is deployed live. This is a good place to run any additional build steps.
+* **Post Deployment Hooks** – These are run within the new environment **after** it is deployed live. This is a good place to run any kind of caching clearing.
 
 Usage
 -----
