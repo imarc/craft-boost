@@ -168,6 +168,9 @@ class Boost_DeploymentService extends BaseApplicationComponent
             chdir($original_cwd);
         }
 
+        // Clean up temporary old-* directory.
+        $this->sh("rm -rf \"$old_env\"");
+
         echo "\nDeployment Complete.\n";
     }
 
