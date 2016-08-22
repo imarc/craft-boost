@@ -111,14 +111,22 @@ class Boost_DeploymentService extends BaseApplicationComponent
         if ($env != $settings->canonicalEnv) {
             if ($settings->canonicalEnv == 'prod') {
                 $src_db = $settings->dbName;
+            } elseif ($settings->canonicalEnv == 'dev') {
+                $src_db = $settings->devDbName;
+            } elseif ($settings->canonicalEnv == 'stage') {
+                $src_db = $settings->stageDbName;
             } else {
-                $src_db = $settings->canonicalEnv . '_' . $settings->dbName;
+                throw new Exception("Canonical environment must be dev, stage, or prod.");
             }
 
             if ($env == 'prod') {
                 $new_db = $settings->dbName;
+            } elseif ($env == 'dev') {
+                $new_db = $settings->devDbName;
+            } elseif ($env == 'stage') {
+                $new_db = $settings->stageDbName;
             } else {
-                $new_db = $env . '_' . $settings->dbName;
+                throw new Exception("Target environment must be dev, stage, or prod.");
             }
 
             // Dump source database.

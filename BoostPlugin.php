@@ -41,12 +41,16 @@ class BoostPlugin extends BasePlugin
     public function defineSettings()
     {
         return array(
-            'vcsUrl' => array(AttributeType::String, 'default' => ''),
-            'vcsCache' => array(AttributeType::String, 'default' => ''),
+            'canonicalEnv' => array(AttributeType::String, 'default' => 'prod'),
+            'devDbName' => array(AttributeType::String, 'default' => ''),
+            'stageDbName' => array(AttributeType::String, 'default' => ''),
             'dbName' => array(AttributeType::String, 'default' => ''),
             'envRoot' => array(AttributeType::String, 'default' => ''),
+            'vcsCache' => array(AttributeType::String, 'default' => ''),
             'vcsDirs' => array(AttributeType::String, 'default' => ''),
-            'canonicalEnv' => array(AttributeType::String, 'default' => 'prod'),
+            'vcsUrl' => array(AttributeType::String, 'default' => ''),
+            'preDeploymentHooks' => array(AttributeType::String, 'default' => ''),
+            'postDeploymentHooks' => array(AttributeType::String, 'default' => ''),
         );
     }
 
