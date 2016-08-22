@@ -30,10 +30,33 @@
 
 {{ forms.textField({
 	first:        true,
-	label:        "Base Database Name"|t,
+	label:        "Development Database Name"|t,
+	id:           'devDbName',
+	name:         'devDbName',
+    instructions: "This will be used for the <strong>development</strong> environment. If left blank, Boost will use the name of the production database prefixed with 'dev_'."|t,
+	value:        settings.devDbName,
+	autofocus:    true,
+	errors:       settings.getErrors('devDbName')
+}) }}
+
+{{ forms.textField({
+	first:        true,
+	label:        "Staging Database Name"|t,
+	id:           'stageDbName',
+	name:         'stageDbName',
+    instructions: "This will be used for the <strong>staging</strong> environment. If left blank, Boost will use the name of the production database prefixed with 'stage_'."|t,
+	value:        settings.devDbName,
+	value:        settings.stageDbName,
+	autofocus:    true,
+	errors:       settings.getErrors('stageDbName')
+}) }}
+
+{{ forms.textField({
+	first:        true,
+	label:        "Production Database Name"|t,
 	id:           'dbName',
 	name:         'dbName',
-	instructions: "This will be used for the <strong>production</strong> environment. For Dev and Stage, this will be prefixed with 'dev_' and 'stage_' respectively."|t,
+	instructions: "This will be used for the <strong>production</strong> environment. This field is required."|t,
 	value:        settings.dbName,
 	autofocus:    true,
 	errors:       settings.getErrors('dbName')
@@ -70,4 +93,24 @@
 	value:        settings.vcsDirs,
 	autofocus:    true,
 	errors:       settings.getErrors('vcsDirs')
+}) }}
+
+{{ forms.textareaField({
+	label:        "Pre Deployment Hooks"|t,
+	id:           'preDeploymentHooks',
+	name:         'preDeploymentHooks',
+	instructions: "The following commands are run within the new environment before it is deployed."|t,
+	value:        settings.preDeploymentHooks,
+	autofocus:    true,
+	errors:       settings.getErrors('preDeploymentHooks')
+}) }}
+
+{{ forms.textareaField({
+	label:        "Post Deployment Hooks"|t,
+	id:           'postDeploymentHooks',
+	name:         'postDeploymentHooks',
+	instructions: "The following commands are run within the new environment after it is deployed."|t,
+	value:        settings.postDeploymentHooks,
+	autofocus:    true,
+	errors:       settings.getErrors('postDeploymentHooks')
 }) }}

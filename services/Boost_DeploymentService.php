@@ -26,7 +26,13 @@ class Boost_DeploymentService extends BaseApplicationComponent
         $cmd = call_user_func_array('sprintf', func_get_args());
 
         echo "\n= $cmd =\n";
-        return system($cmd);
+        $result = system($cmd, $retval);
+
+        if ($retval) {
+            throw new Exception(sprintf('Halting: error running "%s"', $cmd));
+        } else {
+            return $result;
+        }
     }
 
 
@@ -39,7 +45,13 @@ class Boost_DeploymentService extends BaseApplicationComponent
     {
         $cmd = call_user_func_array('sprintf', func_get_args());
 
-        system($cmd);
+        $result = system($cmd);
+
+        if ($retval) {
+            throw new Exception(sprintf('Halting: error running "%s"', $cmd));
+        } else {
+            return $result;
+        }
     }
 
 
@@ -102,23 +114,56 @@ class Boost_DeploymentService extends BaseApplicationComponent
             $this->sh("composer install --ignore-platform-reqs -d %s", $new_env);
         }
 
+        if (file_exists("$new_env/package.json")) {
+            $original_cwd = getcwd();
+            chdir($new_env);
+            $this->sh("npm install --production");
+            chdir($original_cwd);
+        }
+
+        if (file_exists("$new_env/gulpfile.js")) {
+            $original_cwd = getcwd();
+            chdir($new_env);
+            $this->sh("gulp");
+            chdir($original_cwd);
+        }
+
+        // Run Before Deploy Hooks
+        if ($settings->preDeploymentHooks) {
+            $original_cwd = getcwd();
+            chdir($new_env);
+            $this->sh($settings->preDeploymentHooks);
+            chdir($original_cwd);
+        }
 
         // Remove any old old-dir.
         $live_env = $settings->envRoot . "/$env";
         $old_env = $settings->envRoot . "/old-$env";
         $this->sh("rm -rf \"$old_env\"");
 
+        $prod_db = $settings->dbName;
+        $dev_db = $settings->devDbName ?: 'dev_' . $settings->dbName;
+        $stage_db = $settings->devDbName ?: 'dev_' . $settings->dbName;
+
         if ($env != $settings->canonicalEnv) {
             if ($settings->canonicalEnv == 'prod') {
-                $src_db = $settings->dbName;
+                $src_db = $prod_db;
+            } elseif ($settings->canonicalEnv == 'dev') {
+                $src_db = $dev_db;
+            } elseif ($settings->canonicalEnv == 'stage') {
+                $src_db = $stage_db;
             } else {
-                $src_db = $settings->canonicalEnv . '_' . $settings->dbName;
+                throw new Exception("Canonical environment must be dev, stage, or prod.");
             }
 
             if ($env == 'prod') {
-                $new_db = $settings->dbName;
+                $new_db = $prod_db;
+            } elseif ($env == 'dev') {
+                $new_db = $dev_db;
+            } elseif ($env == 'stage') {
+                $new_db = $stage_db;
             } else {
-                $new_db = $env . '_' . $settings->dbName;
+                throw new Exception("Target environment must be dev, stage, or prod.");
             }
 
             // Dump source database.
@@ -137,6 +182,17 @@ class Boost_DeploymentService extends BaseApplicationComponent
 
         // Move current env to old and new env live.
         $this->sh("mv \"$live_env\" \"$old_env\"; mv \"$new_env\" \"$live_env\"");
+
+        // Run After Deploy Hooks
+        if ($settings->postDeploymentHooks) {
+            $original_cwd = getcwd();
+            chdir($live_env);
+            $this->sh($settings->postDeploymentHooks);
+            chdir($original_cwd);
+        }
+
+        // Clean up temporary old-* directory.
+        $this->sh("rm -rf \"$old_env\"");
 
         echo "\nDeployment Complete.\n";
     }
