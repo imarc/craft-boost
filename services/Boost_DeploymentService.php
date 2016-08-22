@@ -26,7 +26,13 @@ class Boost_DeploymentService extends BaseApplicationComponent
         $cmd = call_user_func_array('sprintf', func_get_args());
 
         echo "\n= $cmd =\n";
-        return system($cmd);
+        $result = system($cmd, $retval);
+
+        if ($retval) {
+            throw new Exception(sprintf('Halting: error running "%s"', $cmd));
+        } else {
+            return $result;
+        }
     }
 
 
@@ -39,7 +45,13 @@ class Boost_DeploymentService extends BaseApplicationComponent
     {
         $cmd = call_user_func_array('sprintf', func_get_args());
 
-        system($cmd);
+        $result = system($cmd);
+
+        if ($retval) {
+            throw new Exception(sprintf('Halting: error running "%s"', $cmd));
+        } else {
+            return $result;
+        }
     }
 
 
