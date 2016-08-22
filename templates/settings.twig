@@ -94,3 +94,23 @@
 	autofocus:    true,
 	errors:       settings.getErrors('vcsDirs')
 }) }}
+
+{{ forms.textarea({
+	label:        "Pre Deployment Hooks"|t,
+	id:           'preDeploymentHooks',
+	name:         'preDeploymentHooks',
+	instructions: "The following commands are run within the new environment before it is deployed."|t,
+	value:        settings.preDeploymentHooks,
+	autofocus:    true,
+	errors:       settings.getErrors('preDeploymentHooks')
+}) }}
+
+{{ forms.textarea({
+	label:        "Post Deployment Hooks"|t,
+	id:           'postDeploymentHooks',
+	name:         'postDeploymentHooks',
+	instructions: "The following commands are run within the new environment after it is deployed."|t,
+	value:        settings.postDeploymentHooks,
+	autofocus:    true,
+	errors:       settings.getErrors('postDeploymentHooks')
+}) }}
