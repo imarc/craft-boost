@@ -114,6 +114,13 @@ class Boost_DeploymentService extends BaseApplicationComponent
             $this->sh("composer install --ignore-platform-reqs -d %s", $new_env);
         }
 
+        if (file_exists("$new_env/package.json")) {
+            $original_cwd = getcwd();
+            chdir($new_env);
+            $this->sh("npm install --production");
+            chdir($original_cwd);
+        }
+
         if (file_exists("$new_env/gulpfile.js")) {
             $original_cwd = getcwd();
             chdir($new_env);
