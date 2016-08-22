@@ -30,7 +30,7 @@
 
 {{ forms.textField({
 	first:        true,
-	label:        "Base Database Name"|t,
+	label:        "Development Database Name"|t,
 	id:           'devDbName',
 	name:         'devDbName',
     instructions: "This will be used for the <strong>development</strong> environment. If left blank, Boost will use the name of the production database prefixed with 'dev_'."|t,
@@ -41,7 +41,7 @@
 
 {{ forms.textField({
 	first:        true,
-	label:        "Base Database Name"|t,
+	label:        "Staging Database Name"|t,
 	id:           'stageDbName',
 	name:         'stageDbName',
     instructions: "This will be used for the <strong>staging</strong> environment. If left blank, Boost will use the name of the production database prefixed with 'stage_'."|t,
@@ -53,7 +53,7 @@
 
 {{ forms.textField({
 	first:        true,
-	label:        "Base Database Name"|t,
+	label:        "Production Database Name"|t,
 	id:           'dbName',
 	name:         'dbName',
 	instructions: "This will be used for the <strong>production</strong> environment. This field is required."|t,
@@ -95,7 +95,7 @@
 	errors:       settings.getErrors('vcsDirs')
 }) }}
 
-{{ forms.textarea({
+{{ forms.textareaField({
 	label:        "Pre Deployment Hooks"|t,
 	id:           'preDeploymentHooks',
 	name:         'preDeploymentHooks',
@@ -105,7 +105,7 @@
 	errors:       settings.getErrors('preDeploymentHooks')
 }) }}
 
-{{ forms.textarea({
+{{ forms.textareaField({
 	label:        "Post Deployment Hooks"|t,
 	id:           'postDeploymentHooks',
 	name:         'postDeploymentHooks',
