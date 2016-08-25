@@ -91,16 +91,25 @@ Boost Settings
 
 * **Environment Root** – a single directory containing all environments. For example, `/var/www/example.com/`.
 * **Canonical Environment** – With environment to use as the canonical source for content. This is typically dev before a site is launched, and prod once the site is launched.
-* **Development Database Name** – This database name is used for the **development** environment. If left blank, will use the production database name prefixed with dev\_.
-* **Staging Database Name** – This database name is used for the **staging** environment. If left blank, will use the production database name prefixed with stage\_.
-* **Production Database Name** – This database name is used for the **production** environment.
 * **VCS URL** – This is the URL to checkout from version control. For example, `git@github.com:imarc/example-com.git`.
 * **VCS Cache Directory** – Boost keeps a local clone of the repository in this directory. Typically, something like `/var/www/example.com/cache`.
 * **VCS Directories** – This is a space separated list of relative paths to directories to copy from VCS into the environment as part of deployment. This might be something like
-
 ```
 craft/plugins craft/templates public/css public/fonts public/img public/.htaccess composer.json
 ```
+
+### Database Settings
+
+For each database, you can specify the **name**, **user**, **password**, and **host**. All of these are optional except for the production database name. If The development or staging database names are omitted, then they use the production name prefixed with 'dev_' or 'stage_' respectively.
+
+### Advanced Settings
+
+* **Reset Ownership** – If specified, this will reset the ownership of files synced from version control to this value. (Example: `www-data:web`).
+* **Reset File Permissions** – If specified, this is passed to `chmod` to reset the permissions of files and directories synced from version control. (Example: `g+rw`).
+* **Keep Database** – Boost's default behavior is to delete and recreate each database so that it will only contain tables/records from the export. However, if you do not have permissions to do this, You can enable this setting and Boost will make sure the export includes `DROP TABLE` statements, so that it can replace the tables in the target database without needing to remake it. It does mean that tables that are part of the target environment and not the source environment will persist.
+* **Reset Database Permissions** – If specified, database full database permissions are granted to this user when creating new databases. (Ex: `web@localhost`).
+
+### Hooks
 
 * **Pre Deployment Hooks** – These are run within the new environment **before** it is deployed live. This is a good place to run any additional build steps.
 * **Post Deployment Hooks** – These are run within the new environment **after** it is deployed live. This is a good place to run any kind of caching clearing.

@@ -54,6 +54,56 @@ class Boost_DeploymentService extends BaseApplicationComponent
         }
     }
 
+    static private function getEnvSettings($env)
+    {
+        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
+
+        switch ($env) {
+            case 'prod':
+                $settings = array(
+                    'db' => $cfg->dbName,
+                    'user' => $cfg->dbUser,
+                    'pass' => $cfg->dbPass,
+                    'host' => $cfg->dbHost
+                );
+                break;
+            case 'dev':
+                $settings = array(
+                    'db' => $cfg->devDbName ?: 'dev_' . $cfg->dbName,
+                    'user' => $cfg->devDbUser,
+                    'pass' => $cfg->devDbPass,
+                    'host' => $cfg->devDbHost
+                );
+                break;
+            case 'stage':
+                $settings = array(
+                    'db' => $cfg->stageDbName ?: 'stage_' . $cfg->dbName,
+                    'user' => $cfg->stageDbUser,
+                    'pass' => $cfg->stageDbPass,
+                    'host' => $cfg->stageDbHost
+                );
+                break;
+            default:
+                throw new Exception("Environment must be dev, stage, or prod, not $env.");
+                break;
+        }
+
+        $settings['root'] = $cfg->envRoot . "/$env";
+
+        $mysql_args = array();
+        if ($settings['host']) {
+            $mysql_args[] = '-h ' . $settings['host'];
+        }
+        if ($settings['user']) {
+            $mysql_args[] = '-u ' . $settings['user'];
+        }
+        if ($settings['pass']) {
+            $mysql_args[] = '--password="' . $settings['pass'] . '"';
+        }
+        $settings['mysql_args'] = implode(' ', $mysql_args);
+
+        return (object) $settings;
+    }
 
     /**
      * deploy() to an environment. Should be the short name (dev/stage/prod)
@@ -64,17 +114,20 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function deploy($env)
     {
-        $settings = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
-        $src_env = $settings->envRoot . '/' . $settings->canonicalEnv;
-        $new_env = $settings->envRoot . "/new-$env";
+        $src_cfg = static::getEnvSettings($cfg->canonicalEnv);
+        $new_cfg = static::getEnvSettings($env);
+
+        $tmp_root = $cfg->envRoot . "/new-$env";
 
         // Remove possible stale directory
-        $this->sh("rm -rf \"$new_env\"");
+        $this->sh("rm -rf \"$tmp_root\"");
 
         // Copy from canonical environment to start new environment
-        $this->sh("rsync -a $src_env/ $new_env");
+        $this->sh("rsync -a {$src_cfg->root}/ $tmp_root");
 
+        // Determine target commit
         if ($env == 'prod') {
             $target_commit = $this->getCommit('stage');
         } else {
@@ -92,107 +145,102 @@ class Boost_DeploymentService extends BaseApplicationComponent
         $commit = $this->getCommit('cache');
 
         // Copy from the VCS cache to the new environment
-        $vcs_dirs = array_map('trim', explode(' ', $settings->vcsDirs));
+        $vcs_dirs = array_map('trim', explode(' ', $cfg->vcsDirs));
         foreach ($vcs_dirs as $dir) {
-            $filename = $settings->vcsCache .'/' . $dir;
+            $filename = $cfg->vcsCache .'/' . $dir;
             if (is_dir($filename)) {
                 $filename .= '/';
             }
             $this->sh(sprintf(
                 "rsync -a %s %s",
                 $filename,
-                $new_env . '/' . $dir
+                $tmp_root . '/' . $dir
             ));
 
-            $this->sh("chown -R www-data:web \"$new_env/$dir\"");
-            $this->sh("chmod -R g+rw \"$new_env/$dir\"");
+            if ($cfg->resetOwnership) {
+                $this->sh("chown -R {$cfg->resetOwnership} \"$tmp_root/$dir\"");
+            }
+
+            if ($cfg->resetPermissions) {
+                $this->sh("chmod -R {$cfg->resetPermissions} \"$tmp_root/$dir\"");
+            }
         }
 
-        $this->sh("echo %s > %s", $commit, "$new_env/boost.commit");
+        // Save commit
+        $this->sh("echo %s > %s", $commit, "$tmp_root/boost.commit");
 
-        if (file_exists("$new_env/composer.json")) {
-            $this->sh("composer install --ignore-platform-reqs -d %s", $new_env);
+        // Run Composer if composer.json exists
+        if (file_exists("$tmp_root/composer.json")) {
+            $this->sh("composer install --ignore-platform-reqs -d %s", $tmp_root);
         }
 
-        if (file_exists("$new_env/package.json")) {
+        // Run NPM if package.json exists
+        if (file_exists("$tmp_root/package.json")) {
             $original_cwd = getcwd();
-            chdir($new_env);
+            chdir($tmp_root);
             $this->sh("npm install --production");
             chdir($original_cwd);
         }
 
-        if (file_exists("$new_env/gulpfile.js")) {
+        // Run Pre Deployment Hooks
+        if ($cfg->preDeploymentHooks) {
             $original_cwd = getcwd();
-            chdir($new_env);
-            $this->sh("gulp");
-            chdir($original_cwd);
-        }
-
-        // Run Before Deploy Hooks
-        if ($settings->preDeploymentHooks) {
-            $original_cwd = getcwd();
-            chdir($new_env);
-            $this->sh($settings->preDeploymentHooks);
+            chdir($tmp_root);
+            $this->sh($cfg->preDeploymentHooks);
             chdir($original_cwd);
         }
 
         // Remove any old old-dir.
-        $live_env = $settings->envRoot . "/$env";
-        $old_env = $settings->envRoot . "/old-$env";
-        $this->sh("rm -rf \"$old_env\"");
+        $old_root = $cfg->envRoot . "/old-$env";
+        $this->sh("rm -rf \"$old_root\"");
 
-        $prod_db = $settings->dbName;
-        $dev_db = $settings->devDbName ?: 'dev_' . $settings->dbName;
-        $stage_db = $settings->devDbName ?: 'dev_' . $settings->dbName;
+        // Copy canonical database if not deploying to the canonical environment
+        if ($env != $cfg->canonicalEnv) {
 
-        if ($env != $settings->canonicalEnv) {
-            if ($settings->canonicalEnv == 'prod') {
-                $src_db = $prod_db;
-            } elseif ($settings->canonicalEnv == 'dev') {
-                $src_db = $dev_db;
-            } elseif ($settings->canonicalEnv == 'stage') {
-                $src_db = $stage_db;
-            } else {
-                throw new Exception("Canonical environment must be dev, stage, or prod.");
+            $dump_cmd = "mysqldump " . $src_cfg->mysql_args;
+
+            if ($cfg->keepDatabase) {
+                $dump_cmd .= " --add-drop-table";
             }
 
-            if ($env == 'prod') {
-                $new_db = $prod_db;
-            } elseif ($env == 'dev') {
-                $new_db = $dev_db;
-            } elseif ($env == 'stage') {
-                $new_db = $stage_db;
-            } else {
-                throw new Exception("Target environment must be dev, stage, or prod.");
-            }
+            $import_cmd = "mysql " . $new_cfg->mysql_args;
 
             // Dump source database.
-            $this->sh("mysqldump -n $src_db > \"$new_env/db.dump\"");
+            $this->sh("$dump_cmd -n {$src_cfg->db} > \"$tmp_root/db.dump\"");
 
-            // SITE IS OFFLINE STARTING NOW
-            $this->sh("echo \"DROP DATABASE $new_db; CREATE DATABASE $new_db CHARACTER SET 'UTF8';\" | mysql");
+
+            /**
+             * This version of Boost is CUSTOMIZED. The dump_commmand creates
+             * DROP TABLE commands are part of the dump, and it is loaded
+             * directly back into the database like that.
+             */
+            if (!$cfg->keepDatabase) {
+                $this->sh("$import_cmd -r \"DROP DATABASE {$new_cfg->db}; CREATE DATABASE {$new_cfg->db} CHARACTER SET 'UTF8';\"");
+            }
 
             // Restore Database
-            $this->sh("mysql $new_db < \"$new_env/db.dump\"");
+            $this->sh("$import_cmd {$new_cfg->db} < \"$tmp_root/db.dump\"");
 
-            // Fix web permissions
-            $this->sh("echo \"GRANT ALL ON $new_db.* TO 'web'@'localhost'; FLUSH PRIVILEGES;\" | mysql");
+            if ($cfg->resetDbPermissions) {
+                $this->sh("$import_cmd -r \"GRANT ALL ON {$new_cfg->db}.* TO {$cfg->resetDbPermissions}; FLUSH PRIVILEGES;\"");
+            }
         }
 
 
-        // Move current env to old and new env live.
-        $this->sh("mv \"$live_env\" \"$old_env\"; mv \"$new_env\" \"$live_env\"");
+        // Move live root folder to old and new root live.
+        $this->sh("mv \"{$new_cfg->root}\" \"$old_root\"");
+        $this->sh("mv \"$tmp_root\" \"{$new_cfg->root}\"");
 
         // Run After Deploy Hooks
-        if ($settings->postDeploymentHooks) {
+        if ($cfg->postDeploymentHooks) {
             $original_cwd = getcwd();
-            chdir($live_env);
-            $this->sh($settings->postDeploymentHooks);
+            chdir($new_cfg->root);
+            $this->sh($cfg->postDeploymentHooks);
             chdir($original_cwd);
         }
 
         // Clean up temporary old-* directory.
-        $this->sh("rm -rf \"$old_env\"");
+        $this->sh("rm -rf \"$old_root\"");
 
         echo "\nDeployment Complete.\n";
     }
@@ -231,12 +279,12 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function getCommit($env)
     {
-        $settings = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
         if ($env == 'cache') {
 
             $original_cwd = getcwd();
-            chdir($settings->vcsCache);
+            chdir($cfg->vcsCache);
             $commit = $this->sh("git rev-parse HEAD");
             chdir($original_cwd);
 
@@ -247,7 +295,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
             if (strpos($env, '/') !== FALSE) {
                 $file = "$env/boost.commit";
             } else {
-                $file = $settings->envRoot . "/$env/boost.commit";
+                $file = $cfg->envRoot . "/$env/boost.commit";
             }
 
             return file_exists($file) ? trim(file_get_contents($file)) : false;
@@ -265,17 +313,17 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function prepVCSCache($commit)
     {
-        $settings = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
-        if (!file_exists($settings->vcsCache)) {
-            $this->sh("mkdir %s", $settings->vcsCache);
+        if (!file_exists($cfg->vcsCache)) {
+            $this->sh("mkdir %s", $cfg->vcsCache);
         }
 
         $original_cwd = getcwd();
-        chdir($settings->vcsCache);
+        chdir($cfg->vcsCache);
 
-        if (!file_exists($settings->vcsCache . "/.git")) {
-            $this->sh("git clone %s .", $settings->vcsUrl);
+        if (!file_exists($cfg->vcsCache . "/.git")) {
+            $this->sh("git clone %s .", $cfg->vcsUrl);
         }
 
         $this->sh('git checkout master');
@@ -294,12 +342,12 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function showLog($env)
     {
-        $settings = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
         $current_commit = $this->getCommit($env);
 
         $original_cwd = getcwd();
-        chdir($settings->vcsCache);
+        chdir($cfg->vcsCache);
 
         $this->quietSh('git fetch -q origin master:refs/remotes/origin/master');
         $this->quietSh('git log %s...origin/master', $current_commit);
@@ -316,13 +364,13 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function showVersions()
     {
-        $settings = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
-        foreach (glob($settings->envRoot . "/*", GLOB_ONLYDIR) as $env) {
+        foreach (glob($cfg->envRoot . "/*", GLOB_ONLYDIR) as $env) {
             $commit = $this->getCommit($env);
 
             printf("%s: %s\n",
-                preg_replace('#^' . preg_quote($settings->envRoot) . '/?#', '', $env),
+                preg_replace('#^' . preg_quote($cfg->envRoot) . '/?#', '', $env),
                 $commit
             );
         }

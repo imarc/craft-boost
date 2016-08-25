@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## 2.0.0
+
+* Added settings for passwords per database
+* Added advanced settings:
+    * reset ownership
+    * reset file permissions
+    * keep database
+    * reset database permissions
+* Added deploy wrapper script
+* Improved layout of plugin settings
+
 ### 1.2.0
 
 * No longer leave behind old-* ddirectories
@@ -19,7 +30,7 @@ Changelog
 
 * Support added for PHP 5.3 (also added in 0.3.4)
 
-### 1.0.0
+## 1.0.0
 
 * Boost is flagged as stable
 
