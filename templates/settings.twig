@@ -6,93 +6,270 @@
 
 {% import "_includes/forms" as forms %}
 
+<style type="text/css">
+    input.text.required {
+        border-color: #de9184;
+    }
+
+    .instructions .required-field {
+        color: #cc5643;
+    }
+
+    .columns {
+        display: flex;
+        flex-flow: row nowrap;
+    }
+
+    .columns > div {
+        flex-basis: 0;
+        flex-grow: 1;
+    }
+
+    .columns > div ~ div {
+        margin-left: 2em;
+    }
+
+    .intro {
+        margin-bottom: 1.5em;
+    }
+</style>
+
+<div class="intro">
+    <p>
+        Boost provides simplified deployment between dev, stage, and prod
+        environments. It does this by copying the databases and files between
+        environments, as well as copying files from version control directly.
+    </p>
+
+    <p>
+        Find the <a href="https://github.com/imarc/craft-boost">documentation</a> on GitHub
+        or contact <a href="https://www.imarc.com">Imarc</a> for more information.
+    </p>
+
+    <div class="textline"></div>
+
+</div>
+
+
+<h1>General Settings</h1>
+
 {{ forms.textField({
-	first:        true,
+    first:        true,
 	label:        "Environment Root"|t,
 	id:           'envRoot',
 	name:         'envRoot',
-	instructions: "Root path for all environments. (/var/www/domain.tld)"|t,
+    instructions: "<strong class=\"required-field\">Required.</strong> Root path for all environments. (/var/www/domain.tld)"|t,
+    class:        "required",
 	value:        settings.envRoot,
-	autofocus:    true,
 	errors:       settings.getErrors('envRoot')
 }) }}
 
 {{ forms.textField({
-	first:        true,
 	label:        "Canonical Environment"|t,
 	id:           'canonicalEnv',
 	name:         'canonicalEnv',
-	instructions: "Which environment to use as canonical for content. (Default is prod)"|t,
+    instructions: "<strong class=\"required-field\">Required.</strong> Which environment to use as canonical for content. (Default is prod)."|t,
+    class:        "required",
 	value:        settings.canonicalEnv,
-	autofocus:    true,
 	errors:       settings.getErrors('canonicalEnv')
 }) }}
 
-{{ forms.textField({
-	first:        true,
-	label:        "Development Database Name"|t,
-	id:           'devDbName',
-	name:         'devDbName',
-    instructions: "This will be used for the <strong>development</strong> environment. If left blank, Boost will use the name of the production database prefixed with 'dev_'."|t,
-	value:        settings.devDbName,
-	autofocus:    true,
-	errors:       settings.getErrors('devDbName')
-}) }}
 
 {{ forms.textField({
-	first:        true,
-	label:        "Staging Database Name"|t,
-	id:           'stageDbName',
-	name:         'stageDbName',
-    instructions: "This will be used for the <strong>staging</strong> environment. If left blank, Boost will use the name of the production database prefixed with 'stage_'."|t,
-	value:        settings.devDbName,
-	value:        settings.stageDbName,
-	autofocus:    true,
-	errors:       settings.getErrors('stageDbName')
-}) }}
-
-{{ forms.textField({
-	first:        true,
-	label:        "Production Database Name"|t,
-	id:           'dbName',
-	name:         'dbName',
-	instructions: "This will be used for the <strong>production</strong> environment. This field is required."|t,
-	value:        settings.dbName,
-	autofocus:    true,
-	errors:       settings.getErrors('dbName')
-}) }}
-
-{{ forms.textField({
-	first:        true,
 	label:        "VCS URL"|t,
 	id:           'vcsUrl',
 	name:         'vcsUrl',
-	instructions: "URL to checkout the source from the Version Control System."|t,
+    instructions: "<strong class=\"required-field\">Required.</strong> URL to checkout the source from the Version Control System."|t,
+    class:        "required",
 	value:        settings.vcsUrl,
-	autofocus:    true,
 	errors:       settings.getErrors('vcsUrl')
 }) }}
 
 {{ forms.textField({
-	first:        true,
 	label:        "VCS Cache Directory"|t,
 	id:           'vcsCache',
 	name:         'vcsCache',
-	instructions: "Absolute path for the VCS Cache directory."|t,
+    instructions: "<strong class=\"required-field\">Required.</strong> Absolute path for the VCS Cache directory."|t,
+    class:        "required",
 	value:        settings.vcsCache,
-	autofocus:    true,
 	errors:       settings.getErrors('vcsCache')
 }) }}
 
 {{ forms.textField({
-	first:        true,
 	label:        "VCS Directories"|t,
 	id:           'vcsDirs',
 	name:         'vcsDirs',
-	instructions: "Relative paths to directories to copy from VCS."|t,
+    instructions: "<strong class=\"required-field\">Required.</strong> Relative paths to directories to copy from VCS."|t,
+    class:        "required",
 	value:        settings.vcsDirs,
-	autofocus:    true,
 	errors:       settings.getErrors('vcsDirs')
+}) }}
+
+<h1>Database Settings</h1>
+
+<div class="columns">
+    {{ forms.textField({
+    	label:        "Production Database Name"|t,
+    	id:           'dbName',
+    	name:         'dbName',
+        instructions: "<strong class=\"required-field\">Required.</strong> Database name for the <strong>production</strong> environment."|t,
+        class:        "required",
+    	value:        settings.dbName,
+    	errors:       settings.getErrors('dbName')
+    }) }}
+
+    {{ forms.textField({
+    	label:        "Production Database User"|t,
+    	id:           'dbUser',
+    	name:         'dbUser',
+        instructions: "Optional database user for the <strong>production</strong> environment."|t,
+    	value:        settings.dbUser,
+    	errors:       settings.getErrors('dbUser')
+    }) }}
+
+    {{ forms.passwordField({
+    	label:        "Production Database Password"|t,
+    	id:           'dbPass',
+    	name:         'dbPass',
+        instructions: "Optional database password for the <strong>production</strong> environment."|t,
+    	value:        settings.dbPass,
+    	errors:       settings.getErrors('dbPass')
+    }) }}
+
+    {{ forms.textField({
+    	label:        "Production Database Host"|t,
+    	id:           'dbHost',
+    	name:         'dbHost',
+        instructions: "Optional database host for the <strong>production</strong> environment."|t,
+    	value:        settings.dbHost,
+    	errors:       settings.getErrors('dbHost')
+    }) }}
+</div>
+
+<div class="columns">
+    {{ forms.textField({
+        label:        "Staging Database Name"|t,
+        id:           'stageDbName',
+        name:         'stageDbName',
+        instructions: "Optional database name for the <strong>staging</strong> environment. Boost will default to using the production database name prefixed with 'stage_'."|t,
+        value:        settings.devDbName,
+        value:        settings.stageDbName,
+        errors:       settings.getErrors('stageDbName')
+    }) }}
+
+    {{ forms.textField({
+        label:        "Staging Database User"|t,
+        id:           'stageDbUser',
+        name:         'stageDbUser',
+        instructions: "Optional database user for the <strong>staging</strong> environment."|t,
+        value:        settings.stageDbUser,
+        errors:       settings.getErrors('stageDbUser')
+    }) }}
+
+    {{ forms.passwordField({
+    	label:        "Staging Database Password"|t,
+    	id:           'stageDbPass',
+    	name:         'stageDbPass',
+        instructions: "Optional database password for the <strong>staging</strong> environment."|t,
+    	value:        settings.stageDbPass,
+    	errors:       settings.getErrors('stageDbPass')
+    }) }}
+
+    {{ forms.textField({
+        label:        "Staging Database Host"|t,
+        id:           'stageDbHost',
+        name:         'stageDbHost',
+        instructions: "Optional database host for the <strong>staging</strong> environment."|t,
+        value:        settings.stageDbHost,
+        errors:       settings.getErrors('stageDbHost')
+    }) }}
+</div>
+
+<div class="columns">
+    {{ forms.textField({
+        label:        "Development Database Name"|t,
+        id:           'devDbName',
+        name:         'devDbName',
+        instructions: "Optional database name for the <strong>development</strong> environment. Boost will default to using the production database name prefixed with 'dev_'."|t,
+        value:        settings.devDbName,
+        errors:       settings.getErrors('devDbName')
+    }) }}
+
+    {{ forms.textField({
+        label:        "Development Database User"|t,
+        id:           'devDbUser',
+        name:         'devDbUser',
+        instructions: "Optional database user for the <strong>development></strong> environment."|t,
+        value:        settings.devDbUser,
+        errors:       settings.getErrors('devDbUser')
+    }) }}
+
+    {{ forms.passwordField({
+    	label:        "Development Database Password"|t,
+    	id:           'devDbPass',
+    	name:         'devDbPass',
+        instructions: "Optional database password for the <strong>development</strong> environment."|t,
+    	value:        settings.devDbPass,
+    	errors:       settings.getErrors('devDbPass')
+    }) }}
+
+    {{ forms.textField({
+        label:        "Development Database Host"|t,
+        id:           'devDbHost',
+        name:         'devDbHost',
+        instructions: "Optional database host for the <strong>development</strong> environment."|t,
+        value:        settings.devDbHost,
+        errors:       settings.getErrors('devDbHost')
+    }) }}
+</div>
+
+<h1>Advanced Settings</h1>
+
+{{ forms.textField({
+    label:        "Reset Ownership"|t,
+    id:           'resetOwnership',
+    name:         'resetOwnership',
+    instructions: "If specified, ownership of files synced from VCS is set to this value. (Default is www-data:web)."|t,
+    value:        settings.resetOwnership,
+    errors:       settings.getErrors('resetOwnership')
+}) }}
+
+{{ forms.textField({
+    label:        "Reset File Permissions"|t,
+    id:           'resetPermissions',
+    name:         'resetPermissions',
+    instructions: "If specified, this is used with 'chmod' to reset the permissions for files synced from VCS. (Default is g+rw)."|t,
+    value:        settings.resetPermissions,
+    errors:       settings.getErrors('resetPermissions')
+}) }}
+
+<div class="field">
+    <div class="heading">
+        <label for="keepDatabase">Keep Database</label>
+        <div class="instructions">
+            <p>
+                Check this if you would rather drop tables and recreate them
+                instead of dropping the whole database. This is likely only
+                necessary if you do not have access to drop/create databases.
+            </p>
+        </div>
+    </div>
+</div>
+{{ forms.checkboxField({
+    label:        "Yes, only recreate tables; do not attempt to recreate the database.",
+    id:           'keepDatabase',
+    name:         'keepDatabase',
+    checked:      settings.keepDatabase,
+    errors:       settings.getErrors('keepDatabase')
+}) }}
+
+{{ forms.textField({
+    label:        "Reset Database Permissions"|t,
+    id:           'resetDbPermissions',
+    name:         'resetDbPermissions',
+    instructions: "If specified, database permissions are granted to the following user after creating a new database. (Default is web@localhost)."|t,
+    value:        settings.resetDbPermissions,
+    errors:       settings.getErrors('resetDbPermissions')
 }) }}
 
 {{ forms.textareaField({
@@ -101,7 +278,6 @@
 	name:         'preDeploymentHooks',
 	instructions: "The following commands are run within the new environment before it is deployed."|t,
 	value:        settings.preDeploymentHooks,
-	autofocus:    true,
 	errors:       settings.getErrors('preDeploymentHooks')
 }) }}
 
@@ -111,6 +287,5 @@
 	name:         'postDeploymentHooks',
 	instructions: "The following commands are run within the new environment after it is deployed."|t,
 	value:        settings.postDeploymentHooks,
-	autofocus:    true,
 	errors:       settings.getErrors('postDeploymentHooks')
 }) }}
