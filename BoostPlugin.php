@@ -25,7 +25,7 @@ class BoostPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '0.3.x';
+        return '2.x';
     }
 
     public function getDeveloper()
