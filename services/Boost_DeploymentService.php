@@ -109,10 +109,15 @@ class Boost_DeploymentService extends BaseApplicationComponent
      * deploy() to an environment. Should be the short name (dev/stage/prod)
      * and not the full path.
      *
-     * @param string $env  Environment to deploy to.
+     * @param string $env
+     *      Environment to deploy to.
+
+     * @param boolean $copyDatabase
+     *      Whether or not to copy the databsae from the canonical env.
+
      * @return void
      */
-    public function deploy($env)
+    public function deploy($env, $copyDatabase = true)
     {
         $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
@@ -195,7 +200,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
         $this->sh("rm -rf \"$old_root\"");
 
         // Copy canonical database if not deploying to the canonical environment
-        if ($env != $cfg->canonicalEnv) {
+        if ($copyDatabase && $env != $cfg->canonicalEnv) {
 
             $dump_cmd = "mysqldump " . $src_cfg->mysql_args;
 

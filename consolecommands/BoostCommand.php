@@ -83,11 +83,11 @@ class BoostCommand extends BaseCommand
      * @param string $env The environment
      * @return void
      */
-    public function actionDeploy($env)
+    public function actionDeploy($env, $copyDatabase = true)
     {
         $deployment = craft()->boost_deployment;
 
-        $deployment->deploy($env);
+        $deployment->deploy($env, $copyDatabase);
     }
 
 
