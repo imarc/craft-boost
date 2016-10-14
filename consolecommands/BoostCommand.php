@@ -50,6 +50,8 @@ class BoostCommand extends BaseCommand
         echo "        Deploys ${b}master${d} to the STAGE environment.\n\n";
         echo "    ${b}yiic boost deploy${d} --env=prod\n";
         echo "        Deploys the version running on the STAGE environment to the PROD environment.\n\n";
+        echo "    ${b}yiic boost deploy${d} --env=stage --copyDatabase=0\n";
+        echo "        Deploys, but disables copying the db from the canonical environment.\n\n";
 
         echo "Log:\n";
         echo "    ${b}yiic boost log${d} --env=[ENVIRONMENT]\n";
@@ -83,9 +85,11 @@ class BoostCommand extends BaseCommand
      * @param string $env The environment
      * @return void
      */
-    public function actionDeploy($env, $copyDatabase = true)
+    public function actionDeploy($env, $copyDatabase = 1)
     {
         $deployment = craft()->boost_deployment;
+
+        $copyDatabase = (bool) $copyDatabase;
 
         $deployment->deploy($env, $copyDatabase);
     }
