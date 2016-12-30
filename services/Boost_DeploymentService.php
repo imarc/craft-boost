@@ -220,14 +220,14 @@ class Boost_DeploymentService extends BaseApplicationComponent
              * directly back into the database like that.
              */
             if (!$cfg->keepDatabase) {
-                $this->sh("$import_cmd -r \"DROP DATABASE {$new_cfg->db}; CREATE DATABASE {$new_cfg->db} CHARACTER SET 'UTF8';\"");
+                $this->sh("$import_cmd -e \"DROP DATABASE {$new_cfg->db}; CREATE DATABASE {$new_cfg->db} CHARACTER SET 'UTF8';\"");
             }
 
             // Restore Database
             $this->sh("$import_cmd {$new_cfg->db} < \"$tmp_root/db.dump\"");
 
             if ($cfg->resetDbPermissions) {
-                $this->sh("$import_cmd -r \"GRANT ALL ON {$new_cfg->db}.* TO {$cfg->resetDbPermissions}; FLUSH PRIVILEGES;\"");
+                $this->sh("$import_cmd -e \"GRANT ALL ON {$new_cfg->db}.* TO {$cfg->resetDbPermissions}; FLUSH PRIVILEGES;\"");
             }
         }
 
