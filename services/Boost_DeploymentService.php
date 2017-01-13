@@ -1,8 +1,9 @@
 <?php
 /**
- * @copyright 2015 iMarc LLC
- * @author Kevin Hamer [kh] <kevin@imarc.net>
- * @author Jeff Turcotte [jt] <jeff@imarc.net>
+ * @copyright 2017 Imarc LLC
+ * @author Kevin Hamer [kh] <kevin@imarc.com>
+ * @author Jeff Turcotte [jt] <jeff@imarc.com>
+ * @author Dan Collins [dc] <dan@imarc.com>
  * @license Apache (see LICENSE file)
  */
 
@@ -111,13 +112,16 @@ class Boost_DeploymentService extends BaseApplicationComponent
      *
      * @param string $env
      *      Environment to deploy to.
-
+     *
      * @param boolean $copyDatabase
      *      Whether or not to copy the databsae from the canonical env.
-
+     *
+     * @param string $branch
+     *      The name of the branch to deploy, defaults to master
+     *
      * @return void
      */
-    public function deploy($env, $copyDatabase = true)
+    public function deploy($env, $copyDatabase = true, $branch = 'master')
     {
         $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
@@ -136,7 +140,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
         if ($env == 'prod') {
             $target_commit = $this->getCommit('stage');
         } else {
-            $target_commit = 'master';
+            $target_commit = $branch;
         }
 
         if (!$target_commit) {
@@ -149,6 +153,24 @@ class Boost_DeploymentService extends BaseApplicationComponent
 
         $commit = $this->getCommit('cache');
 
+        // build rsync flag string
+        $flagList = array('-a');
+        if ($cfg->deleteLeftoverFiles) {
+            $flagList[] = '--delete';
+
+            if ($cfg->protectFromDeletion) {
+                $protectedPaths = array_map('trim', explode(' ', $cfg->protectFromDeletion));
+
+                foreach ($protectedPaths as $path) {
+                    $flagList[] = sprintf(
+                        '--filter="P %s"',
+                        $path
+                    );
+                }
+            }
+        }
+        $flags = join(' ', $flagList);
+
         // Copy from the VCS cache to the new environment
         $vcs_dirs = array_map('trim', explode(' ', $cfg->vcsDirs));
         foreach ($vcs_dirs as $dir) {
@@ -157,7 +179,8 @@ class Boost_DeploymentService extends BaseApplicationComponent
                 $filename .= '/';
             }
             $this->sh(sprintf(
-                "rsync -a %s %s",
+                "rsync %s %s %s",
+                $flags,
                 $filename,
                 $tmp_root . '/' . $dir
             ));
@@ -213,12 +236,6 @@ class Boost_DeploymentService extends BaseApplicationComponent
             // Dump source database.
             $this->sh("$dump_cmd -n {$src_cfg->db} > \"$tmp_root/db.dump\"");
 
-
-            /**
-             * This version of Boost is CUSTOMIZED. The dump_commmand creates
-             * DROP TABLE commands are part of the dump, and it is loaded
-             * directly back into the database like that.
-             */
             if (!$cfg->keepDatabase) {
                 $this->sh("$import_cmd -e \"DROP DATABASE {$new_cfg->db}; CREATE DATABASE {$new_cfg->db} CHARACTER SET 'UTF8';\"");
             }
@@ -331,9 +348,9 @@ class Boost_DeploymentService extends BaseApplicationComponent
             $this->sh("git clone %s .", $cfg->vcsUrl);
         }
 
-        $this->sh('git checkout master');
-        $this->sh('git pull -q origin master');
-        $this->sh("git checkout %s", $commit);
+        $this->sh('git fetch -q');
+        $this->sh('git checkout %s', $commit);
+        $this->sh('git pull -q origin %s', $commit);
 
         chdir($original_cwd);
     }
@@ -345,7 +362,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
      * @param string $env  An environment name
      * @return void
      */
-    public function showLog($env)
+    public function showLog($env, $branch)
     {
         $cfg = craft()->plugins->getPlugin('boost')->getSettings();
 
@@ -354,8 +371,8 @@ class Boost_DeploymentService extends BaseApplicationComponent
         $original_cwd = getcwd();
         chdir($cfg->vcsCache);
 
-        $this->quietSh('git fetch -q origin master:refs/remotes/origin/master');
-        $this->quietSh('git log %s...origin/master', $current_commit);
+        $this->quietSh('git fetch -q origin %s:refs/remotes/origin/%s', $branch, $branch);
+        $this->quietSh('git log %s...origin/%s', $current_commit, $branch);
         echo "\n";
 
         chdir($original_cwd);

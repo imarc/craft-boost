@@ -1,8 +1,9 @@
 <?php
 /**
- * @copyright 2016 Imarc LLC
+ * @copyright 2017 Imarc LLC
  * @author Kevin Hamer [kh] <kevin@imarc.com>
  * @author Jeff Turcotte [jt] <jeff@imarc.com>
+ * @author Dan Collins [dc] <dan@imarc.com>
  * @license Apache (see LICENSE file)
  */
 
@@ -60,6 +61,8 @@ class BoostPlugin extends BasePlugin
             'vcsUrl' => array(AttributeType::String, 'default' => ''),
             'preDeploymentHooks' => array(AttributeType::String, 'default' => ''),
             'postDeploymentHooks' => array(AttributeType::String, 'default' => ''),
+            'deleteLeftoverFiles' => array(AttributeType::Bool, 'default' => false),
+            'protectFromDeletion' => array(AttributeType::String, 'default' => ''),
 
             // For Imarc, should be www-data:web
             'resetOwnership' => array(AttributeType::String, 'default' => 'www-data:web'),

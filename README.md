@@ -108,6 +108,8 @@ For each database, you can specify the **name**, **user**, **password**, and **h
 * **Reset File Permissions** – If specified, this is passed to `chmod` to reset the permissions of files and directories synced from version control. (Example: `g+rw`).
 * **Keep Database** – Boost's default behavior is to delete and recreate each database so that it will only contain tables/records from the export. However, if you do not have permissions to do this, You can enable this setting and Boost will make sure the export includes `DROP TABLE` statements, so that it can replace the tables in the target database without needing to remake it. It does mean that tables that are part of the target environment and not the source environment will persist.
 * **Reset Database Permissions** – If specified, database full database permissions are granted to this user when creating new databases. (Ex: `web@localhost`).
+* **Delete Leftover Files** – If specified, after the VCS directories are synced, leftover files present in the VCS directories but not in the repository will be deleted.
+    * **Protect From Deletion** – A space separated list of files and folders that exist in the VCS directories on the server to protect from being deleted. (Ex: `/writable*`)
 
 ### Hooks
 
@@ -125,6 +127,14 @@ To deploy to a specific environment, use
 
     /var/www/<sitename>/dev/craft/app/etc/console/yiic boost deploy --env=stage
 
+To deploy to a branch to a specific environment, use
+
+    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost deploy --env=stage --branch=branch-name
+
 To show the log of commits that will be deployed to an env
 
     /var/www/<sitename>/dev/craft/app/etc/console/yiic boost log --env=stage
+
+Shows the current versions of each of the environments
+
+    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost versions

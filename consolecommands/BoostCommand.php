@@ -1,8 +1,9 @@
 <?php
 /**
- * @copyright 2015 iMarc LLC
- * @author Kevin Hamer [kh] <kevin@imarc.net>
- * @author Jeff Turcotte [jt] <jeff@imarc.net>
+ * @copyright 2017 Imarc LLC
+ * @author Kevin Hamer [kh] <kevin@imarc.com>
+ * @author Jeff Turcotte [jt] <jeff@imarc.com>
+ * @author Dan Collins [dc] <dan@imarc.com>
  * @license Apache (see LICENSE file)
  */
 
@@ -52,6 +53,8 @@ class BoostCommand extends BaseCommand
         echo "        Deploys the version running on the STAGE environment to the PROD environment.\n\n";
         echo "    ${b}yiic boost deploy${d} --env=stage --copyDatabase=0\n";
         echo "        Deploys, but disables copying the db from the canonical environment.\n\n";
+        echo "    ${b}yiic boost deploy${d} --env=dev --branch=bug-fix\n";
+        echo "        Deploys the bug-fix branch to the DEV environment.\n\n";
 
         echo "Log:\n";
         echo "    ${b}yiic boost log${d} --env=[ENVIRONMENT]\n";
@@ -85,13 +88,13 @@ class BoostCommand extends BaseCommand
      * @param string $env The environment
      * @return void
      */
-    public function actionDeploy($env, $copyDatabase = 1)
+    public function actionDeploy($env, $copyDatabase = 1, $branch = 'master')
     {
         $deployment = craft()->boost_deployment;
 
         $copyDatabase = (bool) $copyDatabase;
 
-        $deployment->deploy($env, $copyDatabase);
+        $deployment->deploy($env, $copyDatabase, $branch);
     }
 
 
@@ -101,11 +104,11 @@ class BoostCommand extends BaseCommand
      * @param string $env The environment
      * @return void
      */
-    public function actionLog($env)
+    public function actionLog($env, $branch = 'master')
     {
         $deployment = craft()->boost_deployment;
 
-        $deployment->showLog($env);
+        $deployment->showLog($env, $branch);
     }
 
 

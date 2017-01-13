@@ -1,6 +1,8 @@
 {#
- # @copyright 2015 iMarc LLC
- # @author Kevin Hamer [kh] <kevin@imarc.net>
+ # @copyright 2017 Imarc LLC
+ # @author Kevin Hamer [kh] <kevin@imarc.com>
+ # @author Jeff Turcotte [jt] <jeff@imarc.com>
+ # @author Dan Collins [dc] <dan@imarc.com>
  # @license Apache (see LICENSE file)
  #}
 
@@ -55,94 +57,94 @@
 
 {{ forms.textField({
     first:        true,
-	label:        "Environment Root"|t,
-	id:           'envRoot',
-	name:         'envRoot',
+    label:        "Environment Root"|t,
+    id:           'envRoot',
+    name:         'envRoot',
     instructions: "<strong class=\"required-field\">Required.</strong> Root path for all environments. (/var/www/domain.tld)"|t,
     class:        "required",
-	value:        settings.envRoot,
-	errors:       settings.getErrors('envRoot')
+    value:        settings.envRoot,
+    errors:       settings.getErrors('envRoot')
 }) }}
 
 {{ forms.textField({
-	label:        "Canonical Environment"|t,
-	id:           'canonicalEnv',
-	name:         'canonicalEnv',
+    label:        "Canonical Environment"|t,
+    id:           'canonicalEnv',
+    name:         'canonicalEnv',
     instructions: "<strong class=\"required-field\">Required.</strong> Which environment to use as canonical for content. (Default is prod)."|t,
     class:        "required",
-	value:        settings.canonicalEnv,
-	errors:       settings.getErrors('canonicalEnv')
+    value:        settings.canonicalEnv,
+    errors:       settings.getErrors('canonicalEnv')
 }) }}
 
 
 {{ forms.textField({
-	label:        "VCS URL"|t,
-	id:           'vcsUrl',
-	name:         'vcsUrl',
+    label:        "VCS URL"|t,
+    id:           'vcsUrl',
+    name:         'vcsUrl',
     instructions: "<strong class=\"required-field\">Required.</strong> URL to checkout the source from the Version Control System."|t,
     class:        "required",
-	value:        settings.vcsUrl,
-	errors:       settings.getErrors('vcsUrl')
+    value:        settings.vcsUrl,
+    errors:       settings.getErrors('vcsUrl')
 }) }}
 
 {{ forms.textField({
-	label:        "VCS Cache Directory"|t,
-	id:           'vcsCache',
-	name:         'vcsCache',
+    label:        "VCS Cache Directory"|t,
+    id:           'vcsCache',
+    name:         'vcsCache',
     instructions: "<strong class=\"required-field\">Required.</strong> Absolute path for the VCS Cache directory."|t,
     class:        "required",
-	value:        settings.vcsCache,
-	errors:       settings.getErrors('vcsCache')
+    value:        settings.vcsCache,
+    errors:       settings.getErrors('vcsCache')
 }) }}
 
 {{ forms.textField({
-	label:        "VCS Directories"|t,
-	id:           'vcsDirs',
-	name:         'vcsDirs',
-    instructions: "<strong class=\"required-field\">Required.</strong> Relative paths to directories to copy from VCS."|t,
+    label:        "VCS Directories"|t,
+    id:           'vcsDirs',
+    name:         'vcsDirs',
+    instructions: "<strong class=\"required-field\">Required.</strong> Relative paths to directories to copy from VCS. Separate paths with spaces. Common paths include <code>craft/plugins craft/templates craft/config public</code>"|t,
     class:        "required",
-	value:        settings.vcsDirs,
-	errors:       settings.getErrors('vcsDirs')
+    value:        settings.vcsDirs,
+    errors:       settings.getErrors('vcsDirs')
 }) }}
 
 <h1>Database Settings</h1>
 
 <div class="columns">
     {{ forms.textField({
-    	label:        "Production Database Name"|t,
-    	id:           'dbName',
-    	name:         'dbName',
+        label:        "Production Database Name"|t,
+        id:           'dbName',
+        name:         'dbName',
         instructions: "<strong class=\"required-field\">Required.</strong> Database name for the <strong>production</strong> environment."|t,
         class:        "required",
-    	value:        settings.dbName,
-    	errors:       settings.getErrors('dbName')
+        value:        settings.dbName,
+        errors:       settings.getErrors('dbName')
     }) }}
 
     {{ forms.textField({
-    	label:        "Production Database User"|t,
-    	id:           'dbUser',
-    	name:         'dbUser',
+        label:        "Production Database User"|t,
+        id:           'dbUser',
+        name:         'dbUser',
         instructions: "Optional database user for the <strong>production</strong> environment."|t,
-    	value:        settings.dbUser,
-    	errors:       settings.getErrors('dbUser')
+        value:        settings.dbUser,
+        errors:       settings.getErrors('dbUser')
     }) }}
 
     {{ forms.passwordField({
-    	label:        "Production Database Password"|t,
-    	id:           'dbPass',
-    	name:         'dbPass',
+        label:        "Production Database Password"|t,
+        id:           'dbPass',
+        name:         'dbPass',
         instructions: "Optional database password for the <strong>production</strong> environment."|t,
-    	value:        settings.dbPass,
-    	errors:       settings.getErrors('dbPass')
+        value:        settings.dbPass,
+        errors:       settings.getErrors('dbPass')
     }) }}
 
     {{ forms.textField({
-    	label:        "Production Database Host"|t,
-    	id:           'dbHost',
-    	name:         'dbHost',
+        label:        "Production Database Host"|t,
+        id:           'dbHost',
+        name:         'dbHost',
         instructions: "Optional database host for the <strong>production</strong> environment."|t,
-    	value:        settings.dbHost,
-    	errors:       settings.getErrors('dbHost')
+        value:        settings.dbHost,
+        errors:       settings.getErrors('dbHost')
     }) }}
 </div>
 
@@ -167,12 +169,12 @@
     }) }}
 
     {{ forms.passwordField({
-    	label:        "Staging Database Password"|t,
-    	id:           'stageDbPass',
-    	name:         'stageDbPass',
+        label:        "Staging Database Password"|t,
+        id:           'stageDbPass',
+        name:         'stageDbPass',
         instructions: "Optional database password for the <strong>staging</strong> environment."|t,
-    	value:        settings.stageDbPass,
-    	errors:       settings.getErrors('stageDbPass')
+        value:        settings.stageDbPass,
+        errors:       settings.getErrors('stageDbPass')
     }) }}
 
     {{ forms.textField({
@@ -199,18 +201,18 @@
         label:        "Development Database User"|t,
         id:           'devDbUser',
         name:         'devDbUser',
-        instructions: "Optional database user for the <strong>development></strong> environment."|t,
+        instructions: "Optional database user for the <strong>development</strong> environment."|t,
         value:        settings.devDbUser,
         errors:       settings.getErrors('devDbUser')
     }) }}
 
     {{ forms.passwordField({
-    	label:        "Development Database Password"|t,
-    	id:           'devDbPass',
-    	name:         'devDbPass',
+        label:        "Development Database Password"|t,
+        id:           'devDbPass',
+        name:         'devDbPass',
         instructions: "Optional database password for the <strong>development</strong> environment."|t,
-    	value:        settings.devDbPass,
-    	errors:       settings.getErrors('devDbPass')
+        value:        settings.devDbPass,
+        errors:       settings.getErrors('devDbPass')
     }) }}
 
     {{ forms.textField({
@@ -263,6 +265,46 @@
     errors:       settings.getErrors('keepDatabase')
 }) }}
 
+<div class="field">
+    <div class="heading">
+        <label for="deleteLeftoverFiles">Delete Leftover Files</label>
+        <div class="instructions">
+            <p>
+                Check this if you want any leftover files to be deleted after the VCS directories are synced.
+            </p>
+        </div>
+
+        {{ forms.checkboxField({
+            label:        "Yes, delete leftover files after syncing VCS directories.",
+            id:           'deleteLeftoverFiles',
+            name:         'deleteLeftoverFiles',
+            checked:      settings.deleteLeftoverFiles,
+            errors:       settings.getErrors('deleteLeftoverFiles')
+        }) }}
+
+        <div class="instructions">
+            <p>
+                <strong>NOTE 1:</strong> If the writable directory lives in your public directory and you are syncing
+                the whole public directory, your uploaded files in the writable directory will be deleted.<br />
+                To prevent this, add the writable directory path to the <code>Protect From Deletion</code> option below.
+            </p>
+            <p>
+                <strong>NOTE 2:</strong> If you are syncing your craft/config directory make sure you commit the license.key file
+                to the repository.
+            </p>
+        </div>
+    </div>
+</div>
+
+{{ forms.textField({
+    label:        "Protect From Deletion"|t,
+    id:           'protectFromDeletion',
+    name:         'protectFromDeletion',
+    instructions: "Provide a space separated list of files and folders that exist in the VCS directories on the server to protect from being deleted. Paths can contain patterns that are compatible with the rsync --filter flag. A common example path is <code>/writable*</code>"|t,
+    value:        settings.protectFromDeletion,
+    errors:       settings.getErrors('protectFromDeletion')
+}) }}
+
 {{ forms.textField({
     label:        "Reset Database Permissions"|t,
     id:           'resetDbPermissions',
@@ -273,19 +315,19 @@
 }) }}
 
 {{ forms.textareaField({
-	label:        "Pre Deployment Hooks"|t,
-	id:           'preDeploymentHooks',
-	name:         'preDeploymentHooks',
-	instructions: "The following commands are run within the new environment before it is deployed."|t,
-	value:        settings.preDeploymentHooks,
-	errors:       settings.getErrors('preDeploymentHooks')
+    label:        "Pre Deployment Hooks"|t,
+    id:           'preDeploymentHooks',
+    name:         'preDeploymentHooks',
+    instructions: "The following commands are run within the new environment before it is deployed."|t,
+    value:        settings.preDeploymentHooks,
+    errors:       settings.getErrors('preDeploymentHooks')
 }) }}
 
 {{ forms.textareaField({
-	label:        "Post Deployment Hooks"|t,
-	id:           'postDeploymentHooks',
-	name:         'postDeploymentHooks',
-	instructions: "The following commands are run within the new environment after it is deployed."|t,
-	value:        settings.postDeploymentHooks,
-	errors:       settings.getErrors('postDeploymentHooks')
+    label:        "Post Deployment Hooks"|t,
+    id:           'postDeploymentHooks',
+    name:         'postDeploymentHooks',
+    instructions: "The following commands are run within the new environment after it is deployed."|t,
+    value:        settings.postDeploymentHooks,
+    errors:       settings.getErrors('postDeploymentHooks')
 }) }}

@@ -1,6 +1,20 @@
 Changelog
 =========
 
+## 2.2.0
+
+* Added ability to deploy a branch from the command line
+* Added ability to delete leftover files after sync
+    * Includes functionality to protect files and directories from deletion
+
+## 2.1.1
+
+* Fixed issue with bad mysql flag
+
+## 2.1.0
+
+* Added flag to disable database copying
+
 ## 2.0.0
 
 * Added settings for passwords per database
