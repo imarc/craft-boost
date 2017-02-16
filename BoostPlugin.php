@@ -26,7 +26,7 @@ class BoostPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '2.3.0';
+        return '2.3.1';
     }
 
     public function getSchemaVersion()

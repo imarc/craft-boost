@@ -46,7 +46,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
     {
         $cmd = call_user_func_array('sprintf', func_get_args());
 
-        $result = system($cmd);
+        $result = system($cmd, $retval);
 
         if ($retval) {
             throw new Exception(sprintf('Halting: error running "%s"', $cmd));
