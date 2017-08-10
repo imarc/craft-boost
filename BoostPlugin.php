@@ -26,7 +26,7 @@ class BoostPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '2.3.1';
+        return '2.4.0';
     }
 
     public function getSchemaVersion()
@@ -67,7 +67,7 @@ class BoostPlugin extends BasePlugin
             'preDeploymentHooks' => array(AttributeType::String, 'default' => ''),
             'postDeploymentHooks' => array(AttributeType::String, 'default' => ''),
             'deleteLeftoverFiles' => array(AttributeType::Bool, 'default' => false),
-            'protectFromDeletion' => array(AttributeType::String, 'default' => ''),
+            'protectFromDeletion' => array(AttributeType::String, 'default' => '.env'),
 
             // For Imarc, should be www-data:web
             'resetOwnership' => array(AttributeType::String, 'default' => 'www-data:web'),

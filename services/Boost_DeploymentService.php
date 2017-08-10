@@ -136,6 +136,11 @@ class Boost_DeploymentService extends BaseApplicationComponent
         // Copy from canonical environment to start new environment
         $this->sh("rsync -a {$src_cfg->root}/ $tmp_root");
 
+        // If using .env, ensure it persists from original env dir
+        if (file_exists("{$cfg->envRoot}/{$env}/.env")) {
+            $this->sh("cp {$cfg->envRoot}/{$env}/.env {$tmp_root}");
+        }
+
         // Determine target commit
         if ($env == 'prod') {
             $target_commit = $this->getCommit('stage');
