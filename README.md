@@ -121,20 +121,20 @@ Usage
 
 To call this command, we use Craft's default CLI:
 
-    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost
+    php /var/www/<sitename>/prod/craft/app/etc/console/yiic.php boost
 
 To deploy to a specific environment, use
 
-    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost deploy --env=stage
+    php /var/www/<sitename>/prod/craft/app/etc/console/yiic.php boost deploy --env=stage
 
 To deploy to a branch to a specific environment, use
 
-    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost deploy --env=stage --branch=branch-name
+    php /var/www/<sitename>/prod/craft/app/etc/console/yiic.php boost deploy --env=stage --branch=branch-name
 
 To show the log of commits that will be deployed to an env
 
-    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost log --env=stage
+    php /var/www/<sitename>/prod/craft/app/etc/console/yiic.php boost log --env=stage
 
 Shows the current versions of each of the environments
 
-    /var/www/<sitename>/dev/craft/app/etc/console/yiic boost versions
+    php /var/www/<sitename>/prod/craft/app/etc/console/yiic.php boost versions
