@@ -57,7 +57,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
 
     static private function getEnvSettings($env)
     {
-        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->boost_config;
 
         switch ($env) {
             case 'prod':
@@ -123,7 +123,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function deploy($env, $copyDatabase = true, $branch = 'master')
     {
-        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->boost_config;
 
         $src_cfg = static::getEnvSettings($cfg->canonicalEnv);
         $new_cfg = static::getEnvSettings($env);
@@ -306,7 +306,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function getCommit($env)
     {
-        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->boost_config;
 
         if ($env == 'cache') {
 
@@ -340,7 +340,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function prepVCSCache($commit)
     {
-        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->boost_config;
 
         if (!file_exists($cfg->vcsCache)) {
             $this->sh("mkdir %s", $cfg->vcsCache);
@@ -369,7 +369,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function showLog($env, $branch)
     {
-        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->boost_config;
 
         $current_commit = $this->getCommit($env);
 
@@ -391,7 +391,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
      */
     public function showVersions()
     {
-        $cfg = craft()->plugins->getPlugin('boost')->getSettings();
+        $cfg = craft()->boost_config;
 
         foreach (glob($cfg->envRoot . "/*", GLOB_ONLYDIR) as $env) {
             $commit = $this->getCommit($env);
