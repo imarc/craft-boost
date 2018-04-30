@@ -3,7 +3,7 @@
     "description": "A Craft plugin that provides basic deployment.",
     "homepage": "https://github.com/imarc/craft-boost",
     "type": "craft-plugin",
-    "license": "Apache",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Kevin Hamer",
