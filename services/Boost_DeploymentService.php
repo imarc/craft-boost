@@ -211,7 +211,7 @@ class Boost_DeploymentService extends BaseApplicationComponent
         if (file_exists("$tmp_root/package.json")) {
             $original_cwd = getcwd();
             chdir($tmp_root);
-            $this->sh("npm install --production");
+            $this->sh("npm install --production --unsafe-perm");
             chdir($original_cwd);
         }
 
